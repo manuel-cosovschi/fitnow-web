@@ -17,11 +17,13 @@
 </head>
 <body>
 
-<div class="landing">
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  LANDING PAGE                                             -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="landing" id="landing">
   <div class="landing-bg"></div>
   <div class="grain"></div>
 
-  <!-- ═══ Hero ═══ -->
   <section class="hero">
     <div class="hero-logo">
       <svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8H7z"/></svg>
@@ -30,16 +32,17 @@
     <p class="subtitle">Tu fitness, sin límites. Conectá con gimnasios, entrenadores y clubes.</p>
   </section>
 
-  <!-- ═══ CTA ═══ -->
   <section class="cta-section">
-    <button class="cta-btn" id="installBtn" onclick="handleInstall()">
-      <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm1 14.59V9a1 1 0 00-2 0v7.59l-2.3-2.3a1 1 0 10-1.4 1.42l4 4a1 1 0 001.4 0l4-4a1 1 0 00-1.4-1.42z"/></svg>
-      Instalar FitNow
+    <button class="cta-btn" onclick="openAuth('login')">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-5v-4H8l4-4 4 4h-3v4h-2z"/></svg>
+      Entrar a FitNow
     </button>
-    <p class="cta-hint">Gratis · Sin App Store · Se instala en tu pantalla de inicio</p>
+    <button class="cta-btn cta-btn--outline" onclick="openAuth('register')">
+      Crear cuenta gratis
+    </button>
+    <p class="cta-hint">Gratis · Sin App Store · Funciona en tu celular</p>
   </section>
 
-  <!-- ═══ Features ═══ -->
   <section class="features">
     <div class="feature-card">
       <div class="feature-icon" style="background: var(--grad-primary)">
@@ -48,7 +51,6 @@
       <h3>Running GPS</h3>
       <p>Navegación en tiempo real con rutas, peligros y métricas avanzadas</p>
     </div>
-
     <div class="feature-card">
       <div class="feature-icon" style="background: var(--grad-purple)">
         <svg viewBox="0 0 24 24"><path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/></svg>
@@ -56,7 +58,6 @@
       <h3>Gym Tracker</h3>
       <p>Registrá ejercicios, series, repeticiones y volumen total</p>
     </div>
-
     <div class="feature-card">
       <div class="feature-icon" style="background: var(--grad-success)">
         <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11zm-7-9H7v5h5v-5z"/></svg>
@@ -64,7 +65,6 @@
       <h3>Clases</h3>
       <p>Inscribite a actividades de gimnasios y clubes en tu zona</p>
     </div>
-
     <div class="feature-card">
       <div class="feature-icon" style="background: linear-gradient(135deg, var(--fn-amber), #E65100)">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5.5-2.5l7.51-3.49L17.5 6.5 9.99 9.99 6.5 17.5zm5.5-6.6c.61 0 1.1.49 1.1 1.1s-.49 1.1-1.1 1.1-1.1-.49-1.1-1.1.49-1.1 1.1-1.1z"/></svg>
@@ -74,7 +74,6 @@
     </div>
   </section>
 
-  <!-- ═══ Stats ═══ -->
   <section class="stats">
     <div class="stat">
       <div class="stat-value">3</div>
@@ -90,23 +89,188 @@
     </div>
   </section>
 
-  <!-- ═══ Install Banner ═══ -->
-  <section class="install-banner">
-    <h3>Instalá FitNow gratis</h3>
-    <p>Agregá la app a tu pantalla de inicio. Sin App Store, sin esperas.</p>
-    <button class="cta-btn" onclick="handleInstall()">
-      <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm1 14.59V9a1 1 0 00-2 0v7.59l-2.3-2.3a1 1 0 10-1.4 1.42l4 4a1 1 0 001.4 0l4-4a1 1 0 00-1.4-1.42z"/></svg>
-      Agregar a inicio
-    </button>
-  </section>
-
-  <!-- ═══ Footer ═══ -->
   <footer>
     <p>FitNow © 2025 · Hecho por <a href="https://github.com/manuel-cosovschi" target="_blank">Manuel Cosovschi</a></p>
   </footer>
 </div>
 
-<!-- ═══ iOS Install Prompt ═══ -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  AUTH MODAL                                               -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="auth-modal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeAuth()">×</button>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Entrar</button>
+      <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Registrarse</button>
+    </div>
+
+    <!-- Login -->
+    <form id="form-login" class="auth-form" onsubmit="submitLogin(event)">
+      <div class="auth-logo">
+        <svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8H7z"/></svg>
+      </div>
+      <h2>Bienvenido</h2>
+      <p class="auth-sub">Ingresá a tu cuenta FitNow</p>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="tu@email.com" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+      <div class="form-error hidden" id="login-error"></div>
+      <button type="submit" class="cta-btn auth-submit-btn" id="login-btn">Entrar</button>
+    </form>
+
+    <!-- Register -->
+    <form id="form-register" class="auth-form hidden" onsubmit="submitRegister(event)">
+      <div class="auth-logo">
+        <svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8H7z"/></svg>
+      </div>
+      <h2>Crear cuenta</h2>
+
+      <div class="role-selector">
+        <button type="button" class="role-btn active" id="role-athlete" onclick="selectRole('athlete')">
+          <span class="role-icon">🏃</span>
+          <span class="role-label">Atleta</span>
+        </button>
+        <button type="button" class="role-btn" id="role-provider" onclick="selectRole('provider')">
+          <span class="role-icon">🏋️</span>
+          <span class="role-label">Proveedor</span>
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label>Nombre completo</label>
+        <input type="text" id="reg-name" placeholder="Juan Pérez" required autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="tu@email.com" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" id="reg-password" placeholder="Mínimo 8 caracteres" required autocomplete="new-password" minlength="8">
+      </div>
+
+      <div id="provider-fields" class="hidden">
+        <div class="form-group">
+          <label>Nombre del establecimiento</label>
+          <input type="text" id="reg-provider-name" placeholder="Gym Central">
+        </div>
+        <div class="form-group">
+          <label>Dirección</label>
+          <input type="text" id="reg-provider-address" placeholder="Av. Corrientes 1234">
+        </div>
+      </div>
+
+      <div class="form-error hidden" id="register-error"></div>
+      <button type="submit" class="cta-btn auth-submit-btn" id="register-btn">Crear cuenta</button>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  APP (shown when logged in)                               -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="app" class="app hidden">
+
+  <header class="app-header">
+    <div class="app-header-left">
+      <div class="app-header-logo">
+        <svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8H7z"/></svg>
+      </div>
+      <span class="app-header-title">FitNow</span>
+    </div>
+    <button class="app-header-avatar" id="header-avatar" onclick="showScreen('profile')"></button>
+  </header>
+
+  <main class="app-main">
+
+    <!-- Explorar -->
+    <div id="screen-explore" class="screen active">
+      <div class="screen-pad">
+        <div class="screen-title-row">
+          <h2>Explorar</h2>
+        </div>
+        <div class="search-bar">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" id="search-input" placeholder="Buscar actividades..." oninput="filterActivities()">
+        </div>
+        <div class="filter-pills" id="filter-pills">
+          <button class="pill active" onclick="filterByCategory(null, this)">Todos</button>
+          <button class="pill" onclick="filterByCategory('principiante', this)">Principiante</button>
+          <button class="pill" onclick="filterByCategory('intermedio', this)">Intermedio</button>
+          <button class="pill" onclick="filterByCategory('avanzado', this)">Avanzado</button>
+        </div>
+        <div id="activities-list" class="card-list">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Cargando actividades...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detalle de actividad -->
+    <div id="screen-activity" class="screen">
+      <div class="screen-pad">
+        <button class="back-btn" onclick="goBack()">
+          <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+          Volver
+        </button>
+        <div id="activity-detail-content"></div>
+      </div>
+    </div>
+
+    <!-- Mis Clases -->
+    <div id="screen-enrollments" class="screen">
+      <div class="screen-pad">
+        <div class="screen-title-row">
+          <h2>Mis Clases</h2>
+        </div>
+        <div id="enrollments-list" class="card-list">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Cargando clases...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel Proveedor -->
+    <div id="screen-provider" class="screen">
+      <div class="screen-pad">
+        <div class="screen-title-row">
+          <h2>Mi Panel</h2>
+        </div>
+        <div id="provider-content"></div>
+      </div>
+    </div>
+
+    <!-- Perfil -->
+    <div id="screen-profile" class="screen">
+      <div class="screen-pad">
+        <div class="screen-title-row">
+          <h2>Perfil</h2>
+        </div>
+        <div id="profile-content"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <nav class="bottom-nav" id="bottom-nav"></nav>
+
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast hidden"></div>
+
+<!-- iOS Install Prompt -->
 <div class="ios-prompt" id="iosPrompt">
   <button class="ios-prompt-close" onclick="closeIosPrompt()">×</button>
   <div class="ios-prompt-content">
