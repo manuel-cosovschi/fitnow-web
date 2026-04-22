@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0A1628">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FitNow">
+  <meta name="description" content="FitNow — Tu fitness, sin límites. Conectá con gimnasios, entrenadores personales y clubes deportivos.">
+
+  <title>FitNow — Tu fitness, sin límites</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="landing">
+  <div class="landing-bg"></div>
+  <div class="grain"></div>
+
+  <!-- ═══ Hero ═══ -->
+  <section class="hero">
+    <div class="hero-logo">
+      <svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8H7z"/></svg>
+    </div>
+    <h1>FitNow</h1>
+    <p class="subtitle">Tu fitness, sin límites. Conectá con gimnasios, entrenadores y clubes.</p>
+  </section>
+
+  <!-- ═══ CTA ═══ -->
+  <section class="cta-section">
+    <button class="cta-btn" id="installBtn" onclick="handleInstall()">
+      <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm1 14.59V9a1 1 0 00-2 0v7.59l-2.3-2.3a1 1 0 10-1.4 1.42l4 4a1 1 0 001.4 0l4-4a1 1 0 00-1.4-1.42z"/></svg>
+      Instalar FitNow
+    </button>
+    <p class="cta-hint">Gratis · Sin App Store · Se instala en tu pantalla de inicio</p>
+  </section>
+
+  <!-- ═══ Features ═══ -->
+  <section class="features">
+    <div class="feature-card">
+      <div class="feature-icon" style="background: var(--grad-primary)">
+        <svg viewBox="0 0 24 24"><path d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3A7.03 7.03 0 0019 13v-2a4.85 4.85 0 01-4.3-2.4l-1-1.6a2.01 2.01 0 00-1.7-1c-.3 0-.5.1-.8.1L6 9v5h2v-4l2.1-1.1-1.8 8.6L4 16.1l-.7 1.9 5.3 2.1.3.2z"/></svg>
+      </div>
+      <h3>Running GPS</h3>
+      <p>Navegación en tiempo real con rutas, peligros y métricas avanzadas</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon" style="background: var(--grad-purple)">
+        <svg viewBox="0 0 24 24"><path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/></svg>
+      </div>
+      <h3>Gym Tracker</h3>
+      <p>Registrá ejercicios, series, repeticiones y volumen total</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon" style="background: var(--grad-success)">
+        <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11zm-7-9H7v5h5v-5z"/></svg>
+      </div>
+      <h3>Clases</h3>
+      <p>Inscribite a actividades de gimnasios y clubes en tu zona</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon" style="background: linear-gradient(135deg, var(--fn-amber), #E65100)">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5.5-2.5l7.51-3.49L17.5 6.5 9.99 9.99 6.5 17.5zm5.5-6.6c.61 0 1.1.49 1.1 1.1s-.49 1.1-1.1 1.1-1.1-.49-1.1-1.1.49-1.1 1.1-1.1z"/></svg>
+      </div>
+      <h3>Explorar</h3>
+      <p>Descubrí proveedores, ofertas y rutas cerca tuyo</p>
+    </div>
+  </section>
+
+  <!-- ═══ Stats ═══ -->
+  <section class="stats">
+    <div class="stat">
+      <div class="stat-value">3</div>
+      <div class="stat-label">Roles</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">13+</div>
+      <div class="stat-label">Pantallas</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">GPS</div>
+      <div class="stat-label">En vivo</div>
+    </div>
+  </section>
+
+  <!-- ═══ Install Banner ═══ -->
+  <section class="install-banner">
+    <h3>Instalá FitNow gratis</h3>
+    <p>Agregá la app a tu pantalla de inicio. Sin App Store, sin esperas.</p>
+    <button class="cta-btn" onclick="handleInstall()">
+      <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm1 14.59V9a1 1 0 00-2 0v7.59l-2.3-2.3a1 1 0 10-1.4 1.42l4 4a1 1 0 001.4 0l4-4a1 1 0 00-1.4-1.42z"/></svg>
+      Agregar a inicio
+    </button>
+  </section>
+
+  <!-- ═══ Footer ═══ -->
+  <footer>
+    <p>FitNow © 2025 · Hecho por <a href="https://github.com/manuel-cosovschi" target="_blank">Manuel Cosovschi</a></p>
+  </footer>
+</div>
+
+<!-- ═══ iOS Install Prompt ═══ -->
+<div class="ios-prompt" id="iosPrompt">
+  <button class="ios-prompt-close" onclick="closeIosPrompt()">×</button>
+  <div class="ios-prompt-content">
+    <div class="ios-prompt-icon">
+      <svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8H7z"/></svg>
+    </div>
+    <div class="ios-prompt-text">
+      <h4>Instalá FitNow</h4>
+      <p>
+        Tocá
+        <svg class="share-icon" viewBox="0 0 24 24"><path d="M16 5l-1.42 1.42-1.59-1.59V16h-2V4.83L9.42 6.42 8 5l4-4 4 4zm4 5v11c0 1.1-.9 2-2 2H6a2 2 0 01-2-2V10c0-1.1.9-2 2-2h3v2H6v11h12V10h-3V8h3c1.1 0 2 .9 2 2z"/></svg>
+        abajo y después <strong>"Agregar a inicio"</strong>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
