@@ -241,7 +241,7 @@ async function loadExplore() {
 
   try {
     const data = await api('GET', '/activities');
-    allActivities = normalizeList(data, 'activities');
+    allActivities = normalizeList(data, 'items');
     renderActivities(allActivities);
   } catch (err) {
     list.innerHTML = `
@@ -260,15 +260,17 @@ function renderActivities(activities) {
 
   if (activeFilter) {
     filtered = filtered.filter(a =>
-      (a.difficulty || '').toLowerCase().includes(activeFilter)
+      (a.kind || '').toLowerCase() === activeFilter ||
+      (a.modality || '').toLowerCase() === activeFilter
     );
   }
 
   if (search) {
     filtered = filtered.filter(a =>
-      (a.name || '').toLowerCase().includes(search) ||
+      (a.title || '').toLowerCase().includes(search) ||
       (a.description || '').toLowerCase().includes(search) ||
-      (a.provider_name || '').toLowerCase().includes(search)
+      (a.provider_name || '').toLowerCase().includes(search) ||
+      (a.location || '').toLowerCase().includes(search)
     );
   }
 
@@ -280,28 +282,48 @@ function renderActivities(activities) {
   list.innerHTML = filtered.map(a => activityCard(a)).join('');
 }
 
+const KIND_ICONS = {
+  gym: `<path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>`,
+  club: `<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5.5-2.5l7.51-3.49L17.5 6.5 9.99 9.99 6.5 17.5zm5.5-6.6c.61 0 1.1.49 1.1 1.1s-.49 1.1-1.1 1.1-1.1-.49-1.1-1.1.49-1.1 1.1-1.1z"/>`,
+  trainer: `<path d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3A7.03 7.03 0 0019 13v-2a4.85 4.85 0 01-4.3-2.4l-1-1.6a2.01 2.01 0 00-1.7-1c-.3 0-.5.1-.8.1L6 9v5h2v-4l2.1-1.1-1.8 8.6L4 16.1l-.7 1.9 5.3 2.1.3.2z"/>`,
+  default: `<path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11zm-7-9H7v5h5v-5z"/>`,
+};
+
+const KIND_COLORS = {
+  gym: 'var(--grad-primary)',
+  club: 'var(--grad-success)',
+  trainer: 'var(--grad-purple)',
+  club_sport: 'linear-gradient(135deg, var(--fn-amber), #E65100)',
+};
+
 function activityCard(a) {
+  const icon = KIND_ICONS[a.kind] || KIND_ICONS.default;
+  const color = KIND_COLORS[a.kind] || 'var(--grad-primary)';
   const price = a.price != null ? `<div class="activity-price">$${Number(a.price).toLocaleString('es-AR')}</div>` : '';
   const desc = a.description ? `<p class="activity-desc">${escHtml(a.description.slice(0, 90))}${a.description.length > 90 ? '…' : ''}</p>` : '';
+  const seatsTag = a.seats_left != null
+    ? `<span class="tag ${a.seats_left === 0 ? 'tag--red' : 'tag--slate'}">${a.seats_left === 0 ? 'Sin lugares' : `${a.seats_left} lugares`}</span>`
+    : '';
   const tags = [
     a.difficulty ? `<span class="tag">${escHtml(a.difficulty)}</span>` : '',
-    a.capacity ? `<span class="tag tag--slate">${a.capacity} lugares</span>` : '',
-    (a.status === 'active') ? '<span class="tag tag--green">Activo</span>' : '',
+    seatsTag,
+    a.modality ? `<span class="tag tag--slate">${escHtml(a.modality)}</span>` : '',
   ].filter(Boolean).join('');
 
   return `
     <div class="activity-card" onclick="openActivityDetail(${a.id})">
       <div class="activity-card-header">
-        <div class="activity-card-icon" style="background: var(--grad-primary)">
-          <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11zm-7-9H7v5h5v-5z"/></svg>
+        <div class="activity-card-icon" style="background: ${color}">
+          <svg viewBox="0 0 24 24">${icon}</svg>
         </div>
         <div class="activity-card-info">
-          <h3>${escHtml(a.name || 'Actividad')}</h3>
-          <p class="activity-provider">${escHtml(a.provider_name || a.provider?.name || '')}</p>
+          <h3>${escHtml(a.title || 'Actividad')}</h3>
+          <p class="activity-provider">${escHtml(a.provider_name || '')}</p>
         </div>
         ${price}
       </div>
       ${desc}
+      ${a.location ? `<p class="activity-location"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>${escHtml(a.location)}</p>` : ''}
       ${tags ? `<div class="activity-tags">${tags}</div>` : ''}
     </div>`;
 }
@@ -333,8 +355,9 @@ async function loadActivityDetail(id) {
 
     const metaItems = [
       activity.price != null ? `<div class="meta-item"><span class="meta-label">Precio</span><span class="meta-val">$${Number(activity.price).toLocaleString('es-AR')}/mes</span></div>` : '',
-      activity.capacity ? `<div class="meta-item"><span class="meta-label">Capacidad</span><span class="meta-val">${activity.capacity} personas</span></div>` : '',
+      activity.seats_left != null ? `<div class="meta-item"><span class="meta-label">Lugares disponibles</span><span class="meta-val">${activity.seats_left}</span></div>` : (activity.capacity ? `<div class="meta-item"><span class="meta-label">Capacidad</span><span class="meta-val">${activity.capacity} personas</span></div>` : ''),
       activity.difficulty ? `<div class="meta-item"><span class="meta-label">Nivel</span><span class="meta-val">${escHtml(activity.difficulty)}</span></div>` : '',
+      activity.location ? `<div class="meta-item"><span class="meta-label">Ubicación</span><span class="meta-val" style="text-align:right;max-width:60%">${escHtml(activity.location)}</span></div>` : '',
     ].filter(Boolean).join('');
 
     const sessionsHtml = sessions.length > 0 ? `
@@ -356,7 +379,7 @@ async function loadActivityDetail(id) {
           <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11zm-7-9H7v5h5v-5z"/></svg>
         </div>
         <div>
-          <h1 class="detail-title">${escHtml(activity.name || '')}</h1>
+          <h1 class="detail-title">${escHtml(activity.title || '')}</h1>
           <p class="detail-provider">${escHtml(activity.provider_name || activity.provider?.name || '')}</p>
         </div>
       </div>
@@ -547,6 +570,7 @@ function loadProfile() {
 function normalizeList(data, key) {
   if (Array.isArray(data)) return data;
   if (data && Array.isArray(data[key])) return data[key];
+  if (data && Array.isArray(data.items)) return data.items;
   if (data && Array.isArray(data.data)) return data.data;
   return [];
 }
