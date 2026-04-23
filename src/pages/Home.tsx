@@ -27,7 +27,7 @@ export default function Home() {
 
       {/* Metrics Row */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-        <div className="glass-card" style={{ padding: 20 }}>
+        <div onClick={() => navigate('/gamification')} className="glass-card" style={{ padding: 20, cursor: 'pointer' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
             <div style={{ width: 32, height: 32, borderRadius: 16, background: 'rgba(255,179,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Flame size={16} color="var(--fn-amber)" />
@@ -39,7 +39,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: 20 }}>
+        <div onClick={() => navigate('/gamification')} className="glass-card" style={{ padding: 20, cursor: 'pointer' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
             <div style={{ width: 32, height: 32, borderRadius: 16, background: 'rgba(30,144,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Activity size={16} color="var(--fn-blue)" />
@@ -52,10 +52,19 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Promo Banner */}
+      <div onClick={() => navigate('/offers')} className="glass-card" style={{ padding: 20, cursor: 'pointer', background: 'var(--grad-purple)', border: 'none', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <h3 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 4px', color: 'white' }}>Plan PRO 20% OFF</h3>
+          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', margin: 0 }}>Oferta por tiempo limitado.</p>
+        </div>
+        <div style={{ position: 'absolute', right: -20, top: -20, width: 100, height: 100, background: 'rgba(255,255,255,0.1)', borderRadius: '50%', zIndex: 0 }} />
+      </div>
+
       {/* Quick Actions */}
       <section>
         <h2 style={{ fontFamily: '"DM Serif Display", serif', fontSize: 22, marginBottom: 16 }}>Accesos Rápidos</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
           <div onClick={() => navigate('/run')} className="glass-card" style={{ padding: 20, textAlign: 'center', cursor: 'pointer', border: '1px solid var(--fn-blue)' }}>
             <div style={{ width: 48, height: 48, margin: '0 auto 12px', borderRadius: 24, background: 'var(--grad-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-brand)' }}>
               <Navigation size={24} color="white" fill="white" />
@@ -70,6 +79,22 @@ export default function Home() {
             </div>
             <h3 style={{ fontSize: 15, margin: '0 0 4px', fontWeight: 700 }}>Gym Tracker</h3>
             <p style={{ fontSize: 12, color: 'var(--fn-slate)', margin: 0 }}>Registra tu rutina</p>
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div onClick={() => navigate('/club-sports')} className="glass-card" style={{ padding: 16, textAlign: 'center', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 18, background: 'var(--grad-amber)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Trophy size={18} color="white" />
+            </div>
+            <h3 style={{ fontSize: 15, margin: 0, fontWeight: 700 }}>Clubes</h3>
+          </div>
+
+          <div onClick={() => navigate('/trainers')} className="glass-card" style={{ padding: 16, textAlign: 'center', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 18, background: 'var(--grad-success)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Activity size={18} color="white" />
+            </div>
+            <h3 style={{ fontSize: 15, margin: 0, fontWeight: 700 }}>Trainers</h3>
           </div>
         </div>
       </section>

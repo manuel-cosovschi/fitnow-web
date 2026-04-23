@@ -14,7 +14,7 @@ export default function GymHub() {
         <p style={{ color: 'var(--fn-slate)', fontSize: 14, margin: 0 }}>Gestión de fuerza y volumen total.</p>
       </header>
 
-      <div className="glass-card" style={{ padding: 24, textAlign: 'center', cursor: 'pointer', border: '1px solid var(--fn-purple)' }}>
+      <div onClick={() => navigate('/training-plan')} className="glass-card" style={{ padding: 24, textAlign: 'center', cursor: 'pointer', border: '1px solid var(--fn-purple)' }}>
         <div style={{ width: 64, height: 64, margin: '0 auto 16px', borderRadius: 32, background: 'var(--grad-purple)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-purple)' }}>
           <Activity size={32} color="white" />
         </div>

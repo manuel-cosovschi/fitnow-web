@@ -10,6 +10,14 @@ import ProviderDashboard from './pages/ProviderDashboard';
 import RunHub from './pages/RunHub';
 import GymHub from './pages/GymHub';
 import Enrollments from './pages/Enrollments';
+import RunNavigator from './pages/RunNavigator';
+import TrainingPlan from './pages/TrainingPlan';
+import Gamification from './pages/Gamification';
+import SpecialOffers from './pages/SpecialOffers';
+import RunPlanner from './pages/RunPlanner';
+import ClubSports from './pages/ClubSports';
+import TrainerBookings from './pages/TrainerBookings';
+import RunRoutePreview from './pages/RunRoutePreview';
 
 function App() {
   return (
@@ -26,6 +34,14 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/provider" element={<ProviderDashboard />} />
       </Route>
+      <Route path="/run-navigator" element={<RunNavigator />} />
+      <Route path="/run-planner" element={<RunPlanner />} />
+      <Route path="/run-preview" element={<RunRoutePreview />} />
+      <Route path="/training-plan" element={<TrainingPlan />} />
+      <Route path="/gamification" element={<Gamification />} />
+      <Route path="/offers" element={<SpecialOffers />} />
+      <Route path="/club-sports" element={<ClubSports />} />
+      <Route path="/trainers" element={<TrainerBookings />} />
     </Routes>
   );
 }
