@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Play, Share2, Navigation, MapPin } from 'lucide-react';
+import { Play, Share2, MapPin } from 'lucide-react';
 
 export default function RunRoutePreview() {
   const navigate = useNavigate();

@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Play, Check, Plus, Dumbbell } from 'lucide-react';
+import { Check, Plus, Dumbbell } from 'lucide-react';
 
 export default function TrainingPlan() {
   const navigate = useNavigate();
-  const [activeSet, setActiveSet] = useState<{ exercise: number, set: number } | null>(null);
   const [completedSets, setCompletedSets] = useState<Record<string, boolean>>({});
 
   const exercises = [
@@ -44,7 +43,7 @@ export default function TrainingPlan() {
       </header>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-        {exercises.map((ex, exIndex) => (
+        {exercises.map((ex) => (
           <div key={ex.id} className="glass-card" style={{ padding: 20 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
               <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(123,82,248,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -54,7 +53,7 @@ export default function TrainingPlan() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {ex.sets.map((set, setIndex) => {
+              {ex.sets.map((set) => {
                 const key = `${ex.id}-${set.id}`;
                 const isCompleted = completedSets[key];
                 return (

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Map, Flag, Save } from 'lucide-react';
+import { Flag, Save } from 'lucide-react';
 
 export default function RunPlanner() {
   const navigate = useNavigate();

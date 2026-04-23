@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Play, Pause, Square, MapPin, Navigation } from 'lucide-react';
+import { Play, Pause, Square, Navigation } from 'lucide-react';
 
 export default function RunNavigator() {
   const navigate = useNavigate();
