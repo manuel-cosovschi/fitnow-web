@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, Compass, User, Building2 } from 'lucide-react';
+import { Home, Compass, User, Building2, CalendarCheck, Navigation } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export default function MainLayout() {
@@ -10,22 +10,25 @@ export default function MainLayout() {
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
     const u = localStorage.getItem('user');
-    if (!token) {
-      navigate('/login');
-    } else if (u) {
-      setUser(JSON.parse(u));
-    }
+    if (!token) navigate('/login');
+    else if (u) setUser(JSON.parse(u));
   }, [navigate]);
 
   if (!user) return null;
 
-  const tabs = [
-    { id: 'home', path: '/home', icon: Home, label: 'Inicio' },
-    { id: 'explore', path: '/explore', icon: Compass, label: 'Explorar' },
-    ...(user.role === 'provider_admin' || user.role === 'admin' 
-        ? [{ id: 'provider', path: '/provider', icon: Building2, label: 'Panel' }] 
-        : []),
-    { id: 'profile', path: '/profile', icon: User, label: 'Perfil' },
+  const isProvider = user.role === 'provider_admin' || user.role === 'admin';
+
+  const tabs = isProvider ? [
+    { id: 'home',     path: '/home',     icon: Home,         label: 'Inicio' },
+    { id: 'explore',  path: '/explore',  icon: Compass,      label: 'Explorar' },
+    { id: 'provider', path: '/provider', icon: Building2,    label: 'Panel' },
+    { id: 'profile',  path: '/profile',  icon: User,         label: 'Perfil' },
+  ] : [
+    { id: 'home',        path: '/home',        icon: Home,          label: 'Inicio' },
+    { id: 'explore',     path: '/explore',     icon: Compass,       label: 'Explorar' },
+    { id: 'run',         path: '/run',          icon: Navigation,    label: 'Run' },
+    { id: 'enrollments', path: '/enrollments', icon: CalendarCheck, label: 'Mis Clases' },
+    { id: 'profile',     path: '/profile',     icon: User,          label: 'Perfil' },
   ];
 
   return (
@@ -35,13 +38,31 @@ export default function MainLayout() {
         <Outlet />
       </div>
 
-      <nav style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 80, background: 'rgba(10,22,40,0.85)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: '1px solid var(--fn-border)', display: 'flex', justifyContent: 'space-around', alignItems: 'center', paddingBottom: 20, zIndex: 100 }}>
+      <nav style={{
+        position: 'fixed', bottom: 0, left: 0, right: 0,
+        height: 'calc(64px + env(safe-area-inset-bottom))',
+        paddingBottom: 'env(safe-area-inset-bottom)',
+        background: 'rgba(10,22,40,0.88)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        borderTop: '1px solid var(--fn-border)',
+        display: 'flex', justifyContent: 'space-around', alignItems: 'center',
+        zIndex: 100,
+      }}>
         {tabs.map(tab => {
-          const isActive = location.pathname.startsWith(tab.path);
+          const isActive = location.pathname === tab.path || location.pathname.startsWith(tab.path + '/');
           return (
-            <div key={tab.id} onClick={() => navigate(tab.path)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, cursor: 'pointer', color: isActive ? 'var(--fn-blue)' : 'var(--fn-slate)' }}>
-              <tab.icon size={24} color={isActive ? 'var(--fn-blue)' : 'currentColor'} fill={isActive ? 'rgba(30,144,255,0.2)' : 'none'} style={{ transition: 'all 0.2s', transform: isActive ? 'scale(1.1)' : 'scale(1)' }} />
-              <span style={{ fontSize: 10, fontWeight: isActive ? 600 : 500 }}>{tab.label}</span>
+            <div key={tab.id} onClick={() => navigate(tab.path)} style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+              cursor: 'pointer', color: isActive ? 'var(--fn-blue)' : 'var(--fn-ash)',
+              minWidth: 44, padding: '8px 4px',
+              transition: 'color 0.2s',
+            }}>
+              <tab.icon
+                size={22}
+                color={isActive ? 'var(--fn-blue)' : 'var(--fn-ash)'}
+                fill={isActive ? 'rgba(30,144,255,0.2)' : 'none'}
+                style={{ transition: 'all 0.2s', transform: isActive ? 'scale(1.1)' : 'scale(1)' }}
+              />
+              <span style={{ fontSize: 10, fontWeight: isActive ? 700 : 500 }}>{tab.label}</span>
             </div>
           );
         })}
