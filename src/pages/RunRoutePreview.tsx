@@ -6,7 +6,7 @@ export default function RunRoutePreview() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', animation: 'fadeUp 0.4s ease-out' }}>
-      <header style={{ padding: '20px 24px 16px', zIndex: 10, position: 'absolute', top: 0, left: 0, right: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <header style={{ padding: 'calc(16px + env(safe-area-inset-top, 40px)) 24px 16px', zIndex: 10, position: 'absolute', top: 0, left: 0, right: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <button onClick={() => navigate(-1)} style={{ background: 'rgba(10,22,40,0.5)', backdropFilter: 'blur(10px)', color: 'var(--fn-white)', border: 'none', width: 40, height: 40, borderRadius: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           ←
         </button>

@@ -6,7 +6,7 @@ export default function RunPlanner() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', animation: 'fadeUp 0.4s ease-out' }}>
-      <header style={{ padding: '20px 24px 16px', zIndex: 10, position: 'absolute', top: 0, left: 0, right: 0 }}>
+      <header style={{ padding: 'calc(16px + env(safe-area-inset-top, 40px)) 24px 16px', zIndex: 10, position: 'absolute', top: 0, left: 0, right: 0 }}>
         <button onClick={() => navigate(-1)} style={{ background: 'transparent', color: 'var(--fn-white)', fontSize: 14 }}>
           ← Volver
         </button>

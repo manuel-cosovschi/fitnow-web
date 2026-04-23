@@ -30,7 +30,7 @@ export default function RunNavigator() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - env(safe-area-inset-top))', animation: 'fadeUp 0.4s ease-out' }}>
-      <header style={{ padding: '0 0 16px 0', zIndex: 10 }}>
+      <header style={{ padding: 'calc(16px + env(safe-area-inset-top, 40px)) 24px 16px', zIndex: 10 }}>
         <button onClick={() => navigate(-1)} style={{ background: 'transparent', color: 'var(--fn-white)', fontSize: 14 }}>
           ← Cancelar Carrera
         </button>

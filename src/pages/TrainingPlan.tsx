@@ -6,7 +6,7 @@ export default function TrainingPlan() {
   const navigate = useNavigate();
   const [completedSets, setCompletedSets] = useState<Record<string, boolean>>({});
 
-  const exercises = [
+  const [exercises, setExercises] = useState([
     {
       id: 1,
       name: 'Press de Banca',
@@ -25,7 +25,28 @@ export default function TrainingPlan() {
         { id: 3, reps: 8, weight: 100 }
       ]
     }
-  ];
+  ]);
+
+  const addSet = (exId: number) => {
+    setExercises(exercises.map(ex => {
+      if (ex.id === exId) {
+        const nextSetId = ex.sets.length > 0 ? Math.max(...ex.sets.map(s => s.id)) + 1 : 1;
+        const lastSet = ex.sets.length > 0 ? ex.sets[ex.sets.length - 1] : { reps: 10, weight: 0 };
+        return {
+          ...ex,
+          sets: [...ex.sets, { id: nextSetId, reps: lastSet.reps, weight: lastSet.weight }]
+        };
+      }
+      return ex;
+    }));
+  };
+
+  const finishWorkout = () => {
+    alert('¡Entrenamiento Guardado Exitosamente!');
+    navigate(-1);
+  };
+
+
 
   const toggleSet = (exId: number, setId: number) => {
     const key = `${exId}-${setId}`;
@@ -33,7 +54,7 @@ export default function TrainingPlan() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, animation: 'fadeUp 0.4s ease-out', paddingBottom: 40 }}>
+    <div className="page-container" style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: '20px', animation: 'fadeUp 0.4s ease-out', paddingBottom: 40 }}>
       <header>
         <button onClick={() => navigate(-1)} style={{ background: 'transparent', color: 'var(--fn-white)', padding: '0 0 16px 0', fontSize: 14 }}>
           ← Volver
@@ -78,14 +99,18 @@ export default function TrainingPlan() {
               })}
             </div>
 
-            <button style={{ width: '100%', marginTop: 16, padding: 12, borderRadius: 12, border: '1px dashed var(--fn-purple)', color: 'var(--fn-purple)', background: 'transparent', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            <button onClick={() => addSet(ex.id)} style={{ width: '100%', marginTop: 16, padding: 12, borderRadius: 12, border: '1px dashed var(--fn-purple)', color: 'var(--fn-purple)', background: 'transparent', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
               <Plus size={18} /> Agregar Serie
             </button>
           </div>
         ))}
+
+        <button onClick={() => alert('Función de buscar nuevos ejercicios próximamente.')} style={{ padding: 16, borderRadius: 16, background: 'var(--fn-surface)', color: 'var(--fn-white)', border: '1px dashed var(--fn-slate)', fontWeight: 600 }}>
+          + Añadir Ejercicio
+        </button>
       </div>
 
-      <button style={{ width: '100%', padding: 18, borderRadius: 16, background: 'var(--grad-purple)', color: 'white', fontWeight: 700, fontSize: 16, boxShadow: 'var(--shadow-purple)', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10 }}>
+      <button onClick={finishWorkout} style={{ width: '100%', padding: 18, borderRadius: 16, background: 'var(--grad-purple)', color: 'white', fontWeight: 700, fontSize: 16, boxShadow: 'var(--shadow-purple)', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10 }}>
         Finalizar Entrenamiento
       </button>
     </div>

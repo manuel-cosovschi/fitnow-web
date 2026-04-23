@@ -36,11 +36,11 @@ export default function Profile() {
         <h2 style={{ fontFamily: '"DM Serif Display", serif', fontSize: 20, marginBottom: 16 }}>Mi Cuenta</h2>
         
         <div className="glass-card" style={{ overflow: 'hidden' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px 20px', borderBottom: '1px solid var(--fn-border)' }}>
+          <div onClick={() => alert('Próximamente: Lista de actividades favoritas.')} style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px 20px', borderBottom: '1px solid var(--fn-border)', cursor: 'pointer' }}>
             <Heart size={20} color="var(--fn-crimson)" />
             <span style={{ fontSize: 15, fontWeight: 600 }}>Favoritos</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px 20px', borderBottom: '1px solid var(--fn-border)' }}>
+          <div onClick={() => alert('Configuración no disponible en esta versión.')} style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px 20px', borderBottom: '1px solid var(--fn-border)', cursor: 'pointer' }}>
             <Settings size={20} color="var(--fn-slate)" />
             <span style={{ fontSize: 15, fontWeight: 600 }}>Configuración</span>
           </div>

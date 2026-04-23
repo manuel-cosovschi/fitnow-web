@@ -12,7 +12,7 @@ export default function ActivityDetail() {
   useEffect(() => {
     fetch(`https://fitnow-api-production.up.railway.app/api/activities/${id}`)
       .then(res => res.json())
-      .then(data => setActivity(data))
+      .then(data => setActivity(data.activity || data))
       .catch(console.error);
   }, [id]);
 
@@ -26,7 +26,7 @@ export default function ActivityDetail() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ activity_id: id })
+        body: JSON.stringify({ activity_id: Number(id) })
       });
       if (res.ok) setEnrolled(true);
       else alert('Error al inscribirse');
