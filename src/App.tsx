@@ -7,6 +7,9 @@ import Explore from './pages/Explore';
 import Profile from './pages/Profile';
 import ActivityDetail from './pages/ActivityDetail';
 import ProviderDashboard from './pages/ProviderDashboard';
+import RunHub from './pages/RunHub';
+import GymHub from './pages/GymHub';
+import Enrollments from './pages/Enrollments';
 
 function App() {
   return (
@@ -17,6 +20,9 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/explore/:id" element={<ActivityDetail />} />
+        <Route path="/run" element={<RunHub />} />
+        <Route path="/gym" element={<GymHub />} />
+        <Route path="/enrollments" element={<Enrollments />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/provider" element={<ProviderDashboard />} />
       </Route>

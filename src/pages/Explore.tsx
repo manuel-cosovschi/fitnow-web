@@ -11,7 +11,7 @@ export default function Explore() {
   useEffect(() => {
     fetch('https://fitnow-api-production.up.railway.app/api/activities')
       .then(res => res.json())
-      .then(data => setActivities(data))
+      .then(data => setActivities(data.items || []))
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
   }, []);

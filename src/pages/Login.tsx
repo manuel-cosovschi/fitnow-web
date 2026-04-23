@@ -39,7 +39,7 @@ export default function Login() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '60px 24px' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 'calc(60px + env(safe-area-inset-top, 40px)) 24px 24px' }}>
       <div style={{ position: 'absolute', top: 0, width: '100%', height: 320, background: 'linear-gradient(to bottom, rgba(30,144,255,0.18), transparent)', zIndex: 0 }} />
       
       <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 40, animation: 'scaleIn 0.6s ease-out' }}>
