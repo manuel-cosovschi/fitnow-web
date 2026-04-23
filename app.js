@@ -5,6 +5,7 @@ const API = 'https://fitnow-api-production.up.railway.app/api';
 let token = localStorage.getItem('fn_token');
 let currentUser = null;
 let allActivities = [];
+let enrolledIds = new Set();
 let currentActivityId = null;
 let previousScreen = 'explore';
 let selectedRole = 'athlete';
@@ -156,6 +157,15 @@ function enterApp() {
   renderHeaderAvatar();
   const startScreen = currentUser.role === 'provider_admin' ? 'provider' : 'explore';
   showScreen(startScreen);
+  if (currentUser.role !== 'provider_admin') prefetchEnrollments();
+}
+
+async function prefetchEnrollments() {
+  try {
+    const data = await api('GET', '/enrollments/mine');
+    const list = normalizeList(data, 'enrollments');
+    enrolledIds = new Set(list.map(e => Number(e.activity_id || e.activity?.id)).filter(Boolean));
+  } catch { /* silent — enrolledIds stays empty */ }
 }
 
 function renderBottomNav() {
@@ -345,19 +355,23 @@ async function loadActivityDetail(id) {
   el.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Cargando...</p></div>';
 
   try {
-    const [activity, sessionsData] = await Promise.all([
-      api('GET', `/activities/${id}`),
-      api('GET', `/activities/${id}/sessions`).catch(() => []),
-    ]);
-
-    const sessions = normalizeList(sessionsData, 'sessions');
+    const res = await api('GET', `/activities/${id}`);
+    // API returns { activity: {...}, provider: {...} }
+    const activity = res.activity || res;
+    const provider = res.provider || {};
+    const sessions = activity.sessions || [];
     const isProvider = currentUser.role === 'provider_admin';
+    const isEnrolled = enrolledIds.has(Number(id));
+    const color = KIND_COLORS[activity.kind] || 'var(--grad-primary)';
+    const icon = KIND_ICONS[activity.kind] || KIND_ICONS.default;
 
     const metaItems = [
       activity.price != null ? `<div class="meta-item"><span class="meta-label">Precio</span><span class="meta-val">$${Number(activity.price).toLocaleString('es-AR')}/mes</span></div>` : '',
-      activity.seats_left != null ? `<div class="meta-item"><span class="meta-label">Lugares disponibles</span><span class="meta-val">${activity.seats_left}</span></div>` : (activity.capacity ? `<div class="meta-item"><span class="meta-label">Capacidad</span><span class="meta-val">${activity.capacity} personas</span></div>` : ''),
+      activity.seats_left != null ? `<div class="meta-item"><span class="meta-label">Lugares disponibles</span><span class="meta-val">${activity.seats_left} de ${activity.capacity}</span></div>` : '',
       activity.difficulty ? `<div class="meta-item"><span class="meta-label">Nivel</span><span class="meta-val">${escHtml(activity.difficulty)}</span></div>` : '',
-      activity.location ? `<div class="meta-item"><span class="meta-label">Ubicación</span><span class="meta-val" style="text-align:right;max-width:60%">${escHtml(activity.location)}</span></div>` : '',
+      activity.sport?.name ? `<div class="meta-item"><span class="meta-label">Deporte</span><span class="meta-val">${escHtml(activity.sport.name)}</span></div>` : '',
+      provider.city ? `<div class="meta-item"><span class="meta-label">Ciudad</span><span class="meta-val">${escHtml(provider.city)}</span></div>` : '',
+      activity.location ? `<div class="meta-item"><span class="meta-label">Dirección</span><span class="meta-val" style="text-align:right;max-width:58%">${escHtml(activity.location)}</span></div>` : '',
     ].filter(Boolean).join('');
 
     const sessionsHtml = sessions.length > 0 ? `
@@ -373,14 +387,18 @@ async function loadActivityDetail(id) {
           </div>`).join('')}
       </div>` : '';
 
+    const enrollBtn = isProvider ? '' : isEnrolled
+      ? `<button class="cta-btn enroll-btn enroll-btn--done" disabled>✓ Ya estás inscripto</button>`
+      : `<button class="cta-btn enroll-btn" onclick="enrollActivity(${activity.id}, this)">Inscribirse a la actividad</button>`;
+
     el.innerHTML = `
       <div class="detail-hero">
-        <div class="detail-icon" style="background: var(--grad-primary)">
-          <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11zm-7-9H7v5h5v-5z"/></svg>
+        <div class="detail-icon" style="background: ${color}">
+          <svg viewBox="0 0 24 24">${icon}</svg>
         </div>
         <div>
           <h1 class="detail-title">${escHtml(activity.title || '')}</h1>
-          <p class="detail-provider">${escHtml(activity.provider_name || activity.provider?.name || '')}</p>
+          <p class="detail-provider">${escHtml(provider.name || activity.provider_name || '')}</p>
         </div>
       </div>
 
@@ -390,10 +408,7 @@ async function loadActivityDetail(id) {
 
       ${sessionsHtml}
 
-      ${!isProvider ? `
-        <button class="cta-btn enroll-btn" id="enroll-btn-${id}" onclick="enrollActivity(${id}, this)">
-          Inscribirse a la actividad
-        </button>` : ''}
+      ${enrollBtn}
     `;
   } catch (err) {
     el.innerHTML = `<div class="empty-state"><p>${escHtml(err.message)}</p></div>`;
@@ -405,8 +420,10 @@ async function enrollActivity(activityId, btn) {
   btn.textContent = 'Inscribiendo...';
   try {
     await api('POST', '/enrollments', { activity_id: activityId });
+    enrolledIds.add(Number(activityId));
     showToast('¡Inscripción exitosa!');
     btn.textContent = '✓ Inscripto';
+    btn.disabled = true;
     btn.style.background = 'var(--grad-success)';
     btn.style.boxShadow = '0 8px 24px rgba(0,230,118,0.3)';
   } catch (err) {
@@ -440,6 +457,7 @@ async function loadEnrollments() {
   try {
     const data = await api('GET', '/enrollments/mine');
     const enrollments = normalizeList(data, 'enrollments');
+    enrolledIds = new Set(enrollments.map(e => Number(e.activity_id || e.activity?.id)).filter(Boolean));
 
     if (enrollments.length === 0) {
       list.innerHTML = `
@@ -454,7 +472,7 @@ async function loadEnrollments() {
     list.innerHTML = enrollments.map(e => `
       <div class="enrollment-card">
         <div class="enrollment-info">
-          <h3>${escHtml(e.activity_name || e.activity?.name || 'Actividad')}</h3>
+          <h3>${escHtml(e.activity_title || e.activity_name || e.activity?.title || e.activity?.name || 'Actividad')}</h3>
           <p>${escHtml(e.provider_name || e.activity?.provider_name || '')}</p>
           <div class="enrollment-meta">
             <span class="tag tag--green">${escHtml(e.status || 'activo')}</span>
@@ -474,7 +492,8 @@ async function cancelEnrollment(id, btn) {
   if (!confirm('¿Cancelar inscripción?')) return;
   btn.disabled = true;
   try {
-    await api('DELETE', `/enrollments/${id}`);
+    const enrollment = await api('DELETE', `/enrollments/${id}`);
+    enrolledIds.delete(Number(enrollment?.activity_id));
     showToast('Inscripción cancelada');
     loadEnrollments();
   } catch (err) {
@@ -523,7 +542,7 @@ async function loadProviderDashboard() {
             <div class="enrollment-card">
               <div class="enrollment-info">
                 <h3>${escHtml(e.user_name || e.user?.name || 'Usuario')}</h3>
-                <p>${escHtml(e.activity_name || e.activity?.name || '')}</p>
+                <p>${escHtml(e.activity_title || e.activity_name || e.activity?.title || e.activity?.name || '')}</p>
                 <div class="enrollment-meta">
                   <span class="tag tag--green">${escHtml(e.status || 'activo')}</span>
                 </div>
