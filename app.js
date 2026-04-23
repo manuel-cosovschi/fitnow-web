@@ -155,17 +155,8 @@ function enterApp() {
   document.getElementById('app').classList.remove('hidden');
   renderBottomNav();
   renderHeaderAvatar();
-  const startScreen = currentUser.role === 'provider_admin' ? 'provider' : 'explore';
+  const startScreen = currentUser.role === 'provider_admin' ? 'provider' : 'home';
   showScreen(startScreen);
-  if (currentUser.role !== 'provider_admin') prefetchEnrollments();
-}
-
-async function prefetchEnrollments() {
-  try {
-    const data = await api('GET', '/enrollments/mine');
-    const list = normalizeList(data, 'enrollments');
-    enrolledIds = new Set(list.map(e => Number(e.activity_id || e.activity?.id)).filter(Boolean));
-  } catch { /* silent — enrolledIds stays empty */ }
 }
 
 function renderBottomNav() {
@@ -189,6 +180,10 @@ function renderBottomNav() {
     `;
   } else {
     nav.innerHTML = `
+      <button class="nav-btn" data-screen="home" onclick="showScreen('home')">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>Home</span>
+      </button>
       <button class="nav-btn" data-screen="explore" onclick="showScreen('explore')">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5.5-2.5l7.51-3.49L17.5 6.5 9.99 9.99 6.5 17.5zm5.5-6.6c.61 0 1.1.49 1.1 1.1s-.49 1.1-1.1 1.1-1.1-.49-1.1-1.1.49-1.1 1.1-1.1z"/></svg>
         <span>Explorar</span>
@@ -219,8 +214,10 @@ function showScreen(name) {
   const target = document.getElementById(`screen-${name}`);
   if (target) target.classList.add('active');
 
+  if (name === 'home') loadHome();
   if (name === 'explore') loadExplore();
   if (name === 'enrollments') loadEnrollments();
+  if (name === 'offers') loadOffers();
   if (name === 'provider') loadProviderDashboard();
   if (name === 'profile') loadProfile();
 }
@@ -347,6 +344,90 @@ function filterByCategory(cat, btn) {
   document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
   renderActivities(allActivities);
+}
+
+// ── Home ──────────────────────────────────────────────────────
+async function loadHome() {
+  const el = document.getElementById('home-content');
+  el.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Cargando...</p></div>';
+
+  const firstName = (currentUser?.name || '').split(' ')[0] || 'Atleta';
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? 'Buen día' : hour < 20 ? 'Buenas tardes' : 'Buenas noches';
+
+  try {
+    const [activitiesData, enrollmentsData] = await Promise.all([
+      api('GET', '/activities').catch(() => []),
+      api('GET', '/enrollments/mine').catch(() => []),
+    ]);
+
+    const activities = normalizeList(activitiesData, 'items');
+    allActivities = activities;
+    const enrollments = normalizeList(enrollmentsData, 'enrollments');
+    enrolledIds = new Set(enrollments.map(e => Number(e.activity_id || e.activity?.id)).filter(Boolean));
+
+    const upcoming = enrollments.slice(0, 3);
+    const featured = activities.filter(a => a.status === 'active' || !a.status).slice(0, 4);
+
+    const upcomingHtml = upcoming.length > 0 ? `
+      <h3 class="section-heading">Tus próximas clases</h3>
+      <div class="card-list">
+        ${upcoming.map(e => homeEnrollmentCard(e)).join('')}
+      </div>` : `
+      <div class="home-empty">
+        <p>Todavía no estás inscripto en ninguna clase.</p>
+        <button class="cta-btn" onclick="showScreen('explore')">Explorar actividades</button>
+      </div>`;
+
+    const featuredHtml = featured.length > 0 ? `
+      <div class="home-section-header">
+        <h3 class="section-heading">Actividades destacadas</h3>
+        <button class="link-btn" onclick="showScreen('explore')">Ver todas</button>
+      </div>
+      <div class="card-list">
+        ${featured.map(a => activityCard(a)).join('')}
+      </div>` : '';
+
+    el.innerHTML = `
+      <div class="home-greeting">
+        <p class="home-greet-label">${greet},</p>
+        <h1 class="home-greet-name">${escHtml(firstName)} 👋</h1>
+      </div>
+      <div class="home-shortcuts">
+        <button class="home-shortcut" onclick="showScreen('offers')">
+          <svg viewBox="0 0 24 24"><path d="M21.41 11.58l-9-9A2 2 0 0011 2H4a2 2 0 00-2 2v7a2 2 0 00.59 1.42l9 9a2 2 0 002.82 0l7-7a2 2 0 000-2.84zM5.5 7A1.5 1.5 0 114 5.5 1.5 1.5 0 015.5 7z"/></svg>
+          <span>Ofertas</span>
+        </button>
+        <button class="home-shortcut" onclick="showScreen('explore')">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <span>Buscar</span>
+        </button>
+      </div>
+      ${upcomingHtml}
+      ${featuredHtml}
+    `;
+  } catch (err) {
+    el.innerHTML = `<div class="empty-state"><p>Error al cargar: ${escHtml(err.message)}</p></div>`;
+  }
+}
+
+function homeEnrollmentCard(e) {
+  const id = Number(e.activity_id || e.activity?.id);
+  const title = e.activity_title || e.activity_name || e.activity?.title || e.activity?.name || 'Actividad';
+  const provider = e.provider_name || e.activity?.provider_name || '';
+  return `
+    <div class="activity-card" onclick="openActivityDetail(${id})">
+      <div class="activity-card-header">
+        <div class="activity-card-icon" style="background: var(--grad-success)">
+          <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11zm-7-9H7v5h5v-5z"/></svg>
+        </div>
+        <div class="activity-card-info">
+          <h3>${escHtml(title)}</h3>
+          <p class="activity-provider">${escHtml(provider)}</p>
+        </div>
+        <span class="tag tag--green">Inscripto</span>
+      </div>
+    </div>`;
 }
 
 // ── Activity Detail ───────────────────────────────────────────
@@ -502,29 +583,90 @@ async function cancelEnrollment(id, btn) {
   }
 }
 
+// ── Offers ────────────────────────────────────────────────────
+async function loadOffers() {
+  const list = document.getElementById('offers-list');
+  list.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Cargando ofertas...</p></div>';
+
+  try {
+    const data = await api('GET', '/offers');
+    const offers = normalizeList(data, 'items');
+
+    if (offers.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state">
+          <p>No hay ofertas disponibles por ahora</p>
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = offers.map(o => offerCard(o)).join('');
+  } catch (err) {
+    list.innerHTML = `<div class="empty-state"><p>Error al cargar: ${escHtml(err.message)}</p></div>`;
+  }
+}
+
+function offerCard(o) {
+  const color = KIND_COLORS[o.activity_kind] || 'var(--grad-purple)';
+  const discount = o.discount_percent != null
+    ? `${o.discount_percent}% OFF`
+    : (o.discount_label || '');
+  const validUntil = o.valid_until ? `Hasta ${formatDate(o.valid_until)}` : '';
+  const desc = o.description ? `<p class="activity-desc">${escHtml(o.description.slice(0, 140))}${o.description.length > 140 ? '…' : ''}</p>` : '';
+
+  return `
+    <div class="offer-card">
+      <div class="offer-card-header">
+        <div class="offer-card-icon" style="background: ${color}">
+          <svg viewBox="0 0 24 24"><path d="M21.41 11.58l-9-9A2 2 0 0011 2H4a2 2 0 00-2 2v7a2 2 0 00.59 1.42l9 9a2 2 0 002.82 0l7-7a2 2 0 000-2.84zM5.5 7A1.5 1.5 0 114 5.5 1.5 1.5 0 015.5 7z"/></svg>
+        </div>
+        <div class="activity-card-info">
+          <h3>${escHtml(o.title || 'Oferta')}</h3>
+          <p class="activity-provider">${escHtml(o.provider_name || '')}</p>
+        </div>
+        ${discount ? `<span class="offer-badge">${escHtml(discount)}</span>` : ''}
+      </div>
+      ${desc}
+      ${validUntil ? `<p class="offer-validity">${validUntil}</p>` : ''}
+    </div>`;
+}
+
 // ── Provider Dashboard ────────────────────────────────────────
 async function loadProviderDashboard() {
   const el = document.getElementById('provider-content');
   el.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Cargando panel...</p></div>';
 
+  const pid = currentUser.provider_id;
+  if (!pid) {
+    el.innerHTML = `<div class="empty-state"><p>Todavía no tenés un proveedor asignado.</p></div>`;
+    return;
+  }
+
   try {
-    const [enrollmentsData, activitiesData] = await Promise.all([
+    const [activeData, draftData, enrollmentsData] = await Promise.all([
+      api('GET', `/activities?provider_id=${pid}&status=active`).catch(() => []),
+      api('GET', `/activities?provider_id=${pid}&status=draft`).catch(() => []),
       api('GET', '/enrollments/provider').catch(() => []),
-      api('GET', '/activities'),
     ]);
 
+    const activeActs = normalizeList(activeData, 'items');
+    const draftActs = normalizeList(draftData, 'items');
+    const myActs = [...activeActs, ...draftActs];
     const enrollments = normalizeList(enrollmentsData, 'enrollments');
-    const allActs = normalizeList(activitiesData, 'activities');
-    const myActs = allActs.filter(a => a.provider_id === currentUser.provider_id);
+    const activeEnrolls = enrollments.filter(e => (e.status || 'active') === 'active');
 
     el.innerHTML = `
       <div class="provider-stats">
         <div class="pstat">
-          <div class="pstat-val">${myActs.length}</div>
-          <div class="pstat-label">Actividades</div>
+          <div class="pstat-val">${activeActs.length}</div>
+          <div class="pstat-label">Activas</div>
         </div>
         <div class="pstat">
-          <div class="pstat-val">${enrollments.length}</div>
+          <div class="pstat-val">${draftActs.length}</div>
+          <div class="pstat-label">Borradores</div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-val">${activeEnrolls.length}</div>
           <div class="pstat-label">Inscriptos</div>
         </div>
       </div>
@@ -545,6 +687,7 @@ async function loadProviderDashboard() {
                 <p>${escHtml(e.activity_title || e.activity_name || e.activity?.title || e.activity?.name || '')}</p>
                 <div class="enrollment-meta">
                   <span class="tag tag--green">${escHtml(e.status || 'activo')}</span>
+                  ${e.enrolled_at ? `<span class="tag tag--slate">${formatDate(e.enrolled_at)}</span>` : ''}
                 </div>
               </div>
             </div>`).join('')}
@@ -556,7 +699,7 @@ async function loadProviderDashboard() {
 }
 
 // ── Profile ───────────────────────────────────────────────────
-function loadProfile() {
+async function loadProfile() {
   const el = document.getElementById('profile-content');
   if (!currentUser) return;
 
@@ -569,6 +712,29 @@ function loadProfile() {
     admin: 'Administrador',
   };
   const roleLabel = roleLabels[currentUser.role] || currentUser.role;
+  const memberSince = currentUser.created_at ? formatDate(currentUser.created_at) : null;
+
+  const infoRows = [
+    currentUser.phone ? { label: 'Teléfono', value: currentUser.phone } : null,
+    currentUser.units ? { label: 'Unidades', value: currentUser.units === 'metric' ? 'Métrico (km)' : 'Imperial (mi)' } : null,
+    currentUser.language ? { label: 'Idioma', value: currentUser.language === 'es' ? 'Español' : currentUser.language } : null,
+    memberSince ? { label: 'Miembro desde', value: memberSince } : null,
+  ].filter(Boolean);
+
+  const infoHtml = infoRows.length > 0 ? `
+    <div class="profile-info">
+      ${infoRows.map(r => `
+        <div class="profile-info-row">
+          <span class="profile-info-label">${r.label}</span>
+          <span class="profile-info-val">${escHtml(r.value)}</span>
+        </div>`).join('')}
+    </div>` : '';
+
+  const bioHtml = currentUser.bio ? `
+    <div class="profile-bio">
+      <h4>Sobre mí</h4>
+      <p>${escHtml(currentUser.bio)}</p>
+    </div>` : '';
 
   el.innerHTML = `
     <div class="profile-card">
@@ -577,12 +743,47 @@ function loadProfile() {
       <p class="profile-email">${escHtml(currentUser.email || '')}</p>
       <span class="tag tag--blue">${roleLabel}</span>
     </div>
+    <div id="profile-stats" class="profile-stats"></div>
+    ${infoHtml}
+    ${bioHtml}
     <div class="profile-actions">
       <button class="logout-btn" onclick="doLogout()">
         <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4a2 2 0 00-2 2v14a2 2 0 002 2h8v-2H4V5z"/></svg>
         Cerrar sesión
       </button>
     </div>`;
+
+  loadProfileStats();
+}
+
+async function loadProfileStats() {
+  const el = document.getElementById('profile-stats');
+  if (!el) return;
+
+  try {
+    if (currentUser.role === 'provider_admin') {
+      const [activitiesData, enrollmentsData] = await Promise.all([
+        api('GET', '/activities').catch(() => []),
+        api('GET', '/enrollments/provider').catch(() => []),
+      ]);
+      const acts = normalizeList(activitiesData, 'activities');
+      const enrolls = normalizeList(enrollmentsData, 'enrollments');
+      const mine = acts.filter(a => a.provider_id === currentUser.provider_id);
+      el.innerHTML = `
+        <div class="pstat"><div class="pstat-val">${mine.length}</div><div class="pstat-label">Actividades</div></div>
+        <div class="pstat"><div class="pstat-val">${enrolls.length}</div><div class="pstat-label">Inscriptos</div></div>`;
+    } else {
+      const data = await api('GET', '/enrollments/mine').catch(() => []);
+      const enrolls = normalizeList(data, 'enrollments');
+      enrolledIds = new Set(enrolls.map(e => Number(e.activity_id || e.activity?.id)).filter(Boolean));
+      const active = enrolls.filter(e => (e.status || 'active') === 'active').length;
+      el.innerHTML = `
+        <div class="pstat"><div class="pstat-val">${enrolls.length}</div><div class="pstat-label">Inscripciones</div></div>
+        <div class="pstat"><div class="pstat-val">${active}</div><div class="pstat-label">Activas</div></div>`;
+    }
+  } catch {
+    el.innerHTML = '';
+  }
 }
 
 // ── Helpers ───────────────────────────────────────────────────
