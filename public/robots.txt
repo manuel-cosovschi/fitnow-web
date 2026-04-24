@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /provider/
+Disallow: /mi-panel/
+Disallow: /mis-inscripciones/
+Disallow: /checkout/
+Disallow: /api/
+
+Sitemap: https://fitnow.app/sitemap.xml
